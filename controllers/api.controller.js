@@ -1,11 +1,11 @@
 const endpointsJson = require("../endpoints.json")
-const {selectApiTopics}=require("../models/api.models")
+const {selectApiTopics, selectApiArticleByID}=require("../models/api.models")
 
 exports.getApi = (req,res)=>{
     res.status(200).send({endpoints:endpointsJson})
 }
 
-exports.getApiTopics =(req,res)=>{
+exports.getApiTopics =(req,res,next)=>{
     selectApiTopics()
     .then(topics=>{
         res.status(200).send({topics})
@@ -13,4 +13,16 @@ exports.getApiTopics =(req,res)=>{
     .catch((err)=>{
         next(err)
     })
+}
+
+exports.getApiArticleById =(req,res,next)=>{
+    const {article_id} = req.params
+    selectApiArticleByID(article_id)
+    .then((article)=>{
+        res.status(200).send({article})
+    })
+    .catch(err=>{
+        next(err)
+    })
+   
 }

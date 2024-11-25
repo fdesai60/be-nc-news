@@ -8,7 +8,7 @@ exports.postgresErrorHandler = (err,req,res,next)=>{
 exports.customErrorHandler= (err,req,res,next)=>{
     const {status,msg} = err
     if(err && status){
-        res.status(status).send({msg:msg} )
+        res.status(status).send({msg} )
     }
     next(err)
 }

@@ -199,3 +199,74 @@ describe("GET /api/articles/:article_id/comments",()=>{
 
  
 })
+
+
+describe("POST /api/articles/:article_id/comments",()=>{
+  test("201: Responds with the newly posted comment with correct properties",()=>{
+    return request(app)
+    .post("/api/articles/1/comments")
+    .send({username:"butter_bridge",
+      body:"Amazing"
+    })
+    .expect(201)
+    .then(({body:{comment}})=>{
+      expect(comment)
+      .toMatchObject({
+        body: "Amazing",
+        votes:0,
+        author: "butter_bridge",
+        article_id: 1,
+        created_at:expect.any(String)
+      })
+    })
+  })
+  
+  test("400: Responds with a message of Bad Request when request body doesnt contain the correct fields",()=>{
+    return request(app)
+    .post("/api/articles/1/comments")
+    .send({username:"butter_bridge"
+    })
+    .expect(400)
+    .then(({body:{msg}})=>{
+      expect(msg).toBe('Bad Request')
+    })
+  })
+
+  test("400: Responds with a message of Bad Request when request body contains the correct fields, but with invalid values",()=>{
+    return request(app)
+    .post("/api/articles/1/comments")
+    .send({username:3,
+      body:1
+    })
+    .expect(400)
+    .then(({body:{msg}})=>{
+      expect(msg).toBe('Bad Request')
+    })
+  })
+
+  test("400: Responds with error message of 'Bad Request' when an invalid article id is used",()=>{
+    return request(app)
+    .post("/api/articles/one/comments")
+    .send({username:"butter_bridge",
+      body:"Amazing"
+    })
+    .expect(400)
+    .then(({body:{msg}})=>{
+      expect(msg).toBe('Bad Request')
+    })
+  })
+
+  test("404: Responds with error message of 'Article id not found' when a valid article id is used, which doesnt exist in the database",()=>{
+    return request(app)
+    .post("/api/articles/99999/comments")
+    .send({username:"butter_bridge",
+      body:"Amazing"
+    })
+    .expect(404)
+    .then(({body:{msg}})=>{
+      expect(msg).toBe('Article id not found')
+    })
+  
+  })
+
+})

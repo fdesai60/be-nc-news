@@ -86,7 +86,7 @@ describe("/api/articles/:article_id",()=>{
 
 
 describe("GET /api/articles",()=>{
-  test("200 :Responds with an articles array of article objects, each of which should have the following properties: author,title,article_id,topic,created_at,votes,article_img_url and comment_count (the total count of all the comments with this article_id)",()=>{
+  test("200 :Responds with an articles array of article objects, also with a property of comment_count (the total count of all the comments with this article_id)",()=>{
     return request(app)
     .get("/api/articles")
     .expect(200)
@@ -132,6 +132,70 @@ describe("GET /api/articles",()=>{
 
   })
 
+})
 
 
+describe("GET /api/articles/:article_id/comments",()=>{
+
+  test("200: Responds with an array of comments for a valid article_id, which has comments",()=>{
+    return request(app)
+    .get("/api/articles/1/comments")
+    .expect(200)
+    .then(({body:{comments}})=>{
+      expect(Array.isArray(comments)).toBe(true)
+      expect(comments.length).toBe(11)
+      comments.forEach(comment=>{
+        expect(comment).toMatchObject({
+          comment_id:expect.any(Number),
+          votes:expect.any(Number),
+          created_at:expect.any(String),
+          author:expect.any(String),
+          body:expect.any(String),
+          article_id:expect.any(Number)
+        })
+      })
+    })
+  })
+
+  test("200: Responds with comments served with the most recent comments first",()=>{
+    return request(app)
+    .get("/api/articles/1/comments")
+    .then(({body:{comments}})=>{
+      expect(comments).toBeSortedBy("created_at",{
+        descending: true
+      })
+    })
+  })
+
+  test("200: Responds with an empty array of comments for a valid article_id, which has zero comments",()=>{
+    return request(app)
+    .get("/api/articles/2/comments")
+    .expect(200)
+    .then(({body:{comments}})=>{
+      expect(Array.isArray(comments)).toBe(true)
+      expect(comments.length).toBe(0)
+    })
+
+  })
+
+  test("404: Responds with an error message of 'Invalid article id' when article id is a valid id input, but doesn't exist in the database",()=>{
+    return request(app)
+    .get("/api/articles/99999/comments")
+    .expect(404)
+    .then(({body:{msg}})=>{
+      expect(msg).toBe("Invalid article id provided")
+    })
+  })
+
+  test("400: Responds with an error message of 'Bad Request' when article id is invalid",()=>{
+    return request(app)
+    .get("/api/articles/two/comments")
+    .expect(400)
+    .then(({body:{msg}})=>{
+      expect(msg).toBe("Bad Request")
+    })
+
+  })
+
+ 
 })

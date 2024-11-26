@@ -1,5 +1,5 @@
 const endpointsJson = require("../endpoints.json")
-const {selectApiTopics, selectApiArticleByID,selectApiArticles, checkApiArticleExists,selectApiArticleComments}=require("../models/api.models")
+const {selectApiTopics, selectApiArticleByID,selectApiArticles, checkApiArticleExists,selectApiArticleComments,postArticleComment}=require("../models/api.models")
 
 exports.getApi = (req,res)=>{
     res.status(200).send({endpoints:endpointsJson})
@@ -48,6 +48,19 @@ exports.getApiArticleComments =(req,res,next)=>{
         console.log(comments[0]);
         res.status(200).send({ comments });
       })
+    .catch(err=>{
+        next(err)
+    })
+    
+}
+
+exports.postArticleComment =(req,res,next)=>{
+    const commentToPost=req.body
+    const{article_id}=req.params
+    postArticleComment(commentToPost,article_id)
+    .then(comment=>{
+        res.status(201).send({comment})
+    })
     .catch(err=>{
         next(err)
     })

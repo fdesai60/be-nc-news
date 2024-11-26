@@ -1,3 +1,4 @@
+const { use } = require("../app")
 const db = require("../db/connection")
 
 exports.selectApiTopics = ()=>{
@@ -50,3 +51,27 @@ exports.selectApiArticleComments=(article_id)=>{
       return rows
     })
 }
+
+
+exports.postArticleComment = (commentToPost, article_id) => {
+    const { username, body } = commentToPost;
+
+    return db
+      .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
+      .then(({ rows }) => {
+        if (rows.length === 0) {
+
+          return Promise.reject({ status: 404, msg: "Article id not found" });
+        }
+  
+        return db.query(
+          `INSERT INTO comments (body, votes, author, article_id, created_at)
+           VALUES ($1, 0, $2, $3, NOW())
+           RETURNING *`,
+          [body, username, article_id]
+        );
+      })
+      .then(({ rows }) =>{
+        return rows[0]
+      } ); 
+  };

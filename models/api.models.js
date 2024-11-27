@@ -53,7 +53,7 @@ exports.selectApiArticleComments=(article_id)=>{
 }
 
 
-exports.postArticleComment = (commentToPost, article_id) => {
+exports.insertArticleComment = (commentToPost, article_id) => {
     const { username, body } = commentToPost;
 
     return db
@@ -75,3 +75,14 @@ exports.postArticleComment = (commentToPost, article_id) => {
         return rows[0]
       } ); 
   };
+
+exports.updateApiArticle=(article_id,inc_votes)=>{
+return db.query(`UPDATE articles SET votes=votes+$1 WHERE article_id = $2 RETURNING *`,[inc_votes,article_id])
+.then(({rows})=>{
+    if(rows.length===0){
+        return Promise.reject({status:404,msg:"Article id not found"})
+    }
+return rows[0]
+})
+}
+

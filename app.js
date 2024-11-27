@@ -1,6 +1,9 @@
 const express = require("express")
 const app = express()
-const {getApi,getApiTopics,getApiArticleById, getApiArticles, getApiArticleComments,postArticleComment }= require("./controllers/api.controller")
+const {getApi,getApiTopics,getApiArticleById, getApiArticles, getApiArticleComments,postArticleComment,
+patchApiArticle,
+
+ }= require("./controllers/api.controller")
 
 const {customErrorHandler,serverErrorHandler,postgresErrorHandler}= require("./errors")
 
@@ -17,6 +20,9 @@ app.get("/api/articles",getApiArticles)
 app.get("/api/articles/:article_id/comments",getApiArticleComments )
 
 app.post("/api/articles/:article_id/comments",postArticleComment )
+
+app.patch("/api/articles/:article_id",patchApiArticle)
+
 
 app.use(postgresErrorHandler)
 

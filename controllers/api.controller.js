@@ -1,7 +1,7 @@
 const endpointsJson = require("../endpoints.json")
 const {selectApiTopics, selectApiArticleByID,selectApiArticles, checkApiArticleExists,selectApiArticleComments,insertArticleComment,
 updateApiArticle,
-
+deleteDbApiComment
 }=require("../models/api.models")
 
 exports.getApi = (req,res)=>{
@@ -22,7 +22,6 @@ exports.getApiArticleById =(req,res,next)=>{
     const {article_id} = req.params
     selectApiArticleByID(article_id)
     .then((article)=>{
-        console.log(article);
         res.status(200).send({article})
     })
     .catch(err=>{
@@ -49,7 +48,6 @@ exports.getApiArticleComments =(req,res,next)=>{
         return selectApiArticleComments(article_id)
     })
     .then((comments) => {
-        console.log(comments[0]);
         res.status(200).send({ comments });
       })
     .catch(err=>{
@@ -63,7 +61,6 @@ exports.postArticleComment =(req,res,next)=>{
     const{article_id}=req.params
     insertArticleComment(commentToPost,article_id)
     .then(comment=>{
-        console.log(comment);
         res.status(201).send({comment})
     })
     .catch(err=>{
@@ -86,3 +83,15 @@ exports.patchApiArticle=(req,res,next)=>{
     
 }
 
+exports.deleteApiComment=(req,res,next)=>{
+    const {comment_id}=req.params
+    
+    deleteDbApiComment(comment_id)
+    .then(()=>{
+        res.send(204)
+    })
+    .catch(err=>{
+        next(err)
+    })
+
+}

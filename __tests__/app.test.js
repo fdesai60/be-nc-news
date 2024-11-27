@@ -356,3 +356,28 @@ describe("PATCH /api/articles/:article_id",()=>{
 })
 
 
+describe("DELETE /api/comments/:comment_id",()=>{
+  test("204: Responds with no content",()=>{
+    return request(app)
+    .delete("/api/comments/2")
+    .expect(204)
+  })
+
+  test("404: Responds with error msg of 'comment_id not found' when comment_id is valid but not in database",()=>{
+    return request(app)
+    .delete("/api/comments/99999")
+    .expect(404)
+    .then(({body:{msg}})=>{
+      expect(msg).toBe("comment_id not found")
+    })
+  })
+
+  test("400: Responds with error msg of 'Bad Request' when article_id is invalid",()=>{
+    return request(app)
+    .delete("/api/comments/two")
+    .expect(400)
+    .then(({body:{msg}})=>{
+      expect(msg).toBe("Bad Request")
+    })
+  })
+})

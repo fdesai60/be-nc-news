@@ -1,7 +1,8 @@
 const endpointsJson = require("../endpoints.json")
 const {selectApiTopics, selectApiArticleByID,selectApiArticles, checkApiArticleExists,selectApiArticleComments,insertArticleComment,
 updateApiArticle,
-deleteDbApiComment
+deleteDbApiComment,
+selectApiUsers
 }=require("../models/api.models")
 
 exports.getApi = (req,res)=>{
@@ -94,4 +95,14 @@ exports.deleteApiComment=(req,res,next)=>{
         next(err)
     })
 
+}
+
+exports.getApiUsers=(req,res,next)=>{
+    selectApiUsers()
+    .then(users=>{
+        res.status(200).send({users})
+    })
+    .then(err=>{
+        next(err)
+    })
 }

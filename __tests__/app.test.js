@@ -471,4 +471,38 @@ describe("GET /api/articles (with queries",()=>{
 
 })
 
+describe(" GET /api/articles (topic query)",()=>{
+  test("200: Responds with an array of all the articles of the queried topic when the topic exists, and has articles",()=>{
+    return request(app)
+    .get("/api/articles?topic=mitch")
+    .expect(200)
+    .then(({body:{articles}})=>{
+      expect(Array.isArray(articles)).toBe(true)
+      expect(articles.length).toBe(12)
+      articles.forEach(article=>{
+        expect(article.topic).toBe("mitch")
+      })
+    })
+  })
 
+  test("200: Responds with an empty array of the articles of the queried topic when the topic exists, but has no articles",()=>{
+    return request(app)
+    .get("/api/articles?topic=paper")
+    .expect(200)
+    .then(({body:{articles}})=>{
+      expect(Array.isArray(articles)).toBe(true)
+      expect(articles.length).toBe(0)
+    })
+  })
+
+  test("400: Responds with a message of 'Bad Request' when the queried topic doesnt exist in the topics table, hence has no articles",()=>{
+    return request(app)
+      .get("/api/articles?topic=coffee")
+      .expect(400)
+      .then(({body:{msg}})=>{
+        expect(msg).toBe("Bad Request")
+      })
+  })
+
+
+})

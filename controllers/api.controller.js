@@ -2,7 +2,7 @@ const endpointsJson = require("../endpoints.json")
 const {selectApiTopics, selectApiArticleByID,selectApiArticles, checkApiArticleExists,selectApiArticleComments,insertArticleComment,
 updateApiArticle,
 deleteDbApiComment,
-selectApiUsers
+selectApiUsers,checkTopicExists
 }=require("../models/api.models")
 
 exports.getApi = (req,res)=>{
@@ -32,14 +32,22 @@ exports.getApiArticleById =(req,res,next)=>{
 }
 
 exports.getApiArticles=(req,res,next)=>{
-    const {sort_by="created_at",order="desc"}=req.query 
-    selectApiArticles(sort_by,order) 
+    const {sort_by="created_at",order="desc",topic}=req.query 
+
+    const checkTopic= topic?checkTopicExists(topic):Promise.resolve()
+
+    checkTopic
+    .then(()=>{
+       return selectApiArticles(sort_by,order,topic) 
+    })
     .then(articles=>{   
         res.status(200).send({articles})
     })
     .catch(err=>{
         next(err)
     })
+
+   
 
 }
 

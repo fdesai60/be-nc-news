@@ -18,8 +18,8 @@ exports.selectApiArticleByID=(article_id)=>{
     })
 }
 
-exports.selectApiArticles = (sort_by, order) => {
-  
+exports.selectApiArticles = (sort_by, order,topic) => {
+   
     let queryString = `
         SELECT articles.author, articles.title, articles.article_id, articles.topic, 
         articles.created_at, articles.votes, articles.article_img_url, 
@@ -27,11 +27,17 @@ exports.selectApiArticles = (sort_by, order) => {
         FROM articles
         LEFT JOIN comments
         ON articles.article_id = comments.article_id
-        GROUP BY articles.article_id`;
+        `;
 
     const queryValues = [];
 
-   
+    if(topic){
+        queryString+= ` WHERE articles.topic = $1`
+        queryValues.push(topic)
+    }
+
+    queryString+= ` GROUP BY articles.article_id`
+
     const validSortBy = ["title", "topic", "author","created_at", "votes", "article_image_url", "article_id,comment_count"];
     
     
@@ -62,7 +68,14 @@ exports.selectApiArticles = (sort_by, order) => {
         });
 };
 
-
+exports.checkTopicExists=(topic)=>{
+    return db.query(`SELECT * FROM topics WHERE slug = $1`,[topic])
+    .then(({rows})=>{
+        if(rows.length===0){
+            return Promise.reject({status:400,msg:"Bad Request"})
+        }
+    })
+}
 
 exports.checkApiArticleExists=(article_id)=>{
     return db.query(`SELECT * FROM articles WHERE article_id = $1`,[article_id])

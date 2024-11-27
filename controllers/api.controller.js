@@ -32,11 +32,12 @@ exports.getApiArticleById =(req,res,next)=>{
 }
 
 exports.getApiArticles=(req,res,next)=>{
-    selectApiArticles() 
-    .then(articles=>{
+    const {sort_by="created_at",order="desc"}=req.query 
+    selectApiArticles(sort_by,order) 
+    .then(articles=>{   
         res.status(200).send({articles})
     })
-    .then(err=>{
+    .catch(err=>{
         next(err)
     })
 

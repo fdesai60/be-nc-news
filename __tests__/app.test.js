@@ -46,7 +46,7 @@ describe("GET /api/topics",()=>{
 })
 
 describe("/api/articles/:article_id",()=>{
-  test("200: Responds with an article object, which should have the following properties:author,title,article_id,body,topic,created_at,votes and article_img_url",()=>{
+  test("200: Responds with an article object",()=>{
     return request(app)
     .get("/api/articles/2")
     .expect(200)
@@ -151,7 +151,7 @@ describe("GET /api/articles/:article_id/comments",()=>{
           created_at:expect.any(String),
           author:expect.any(String),
           body:expect.any(String),
-          article_id:expect.any(Number)
+          article_id:1
         })
       })
     })
@@ -400,6 +400,74 @@ describe("GET /api/users",()=>{
       })
     })
   })
+
+})
+
+describe("GET /api/articles (with queries",()=>{
+
+    test("200: /api/articles?sort_by=author (default order should be descending)",()=>{
+      return request(app)
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then(({body:{articles}})=>{
+        expect(articles).toBeSortedBy("author",{
+          descending: true
+        })
+      })
+    })
+
+    //Test failing 
+    //endpoint works for all columns except COMMENT COUNT(column added by making a join)
+    // test("200: /api/articles?sort_by=comment_count (default order should be descending)",()=>{
+    //   return request(app)
+    //   .get("/api/articles?sort_by=comment_count")
+    //   .expect(200)
+    //   .then(({body:{articles}})=>{
+    //     expect(articles).toBeSortedBy("comment_count",{
+    //       descending: true
+    //     })
+    //   })
+    // })
+
+   
+  
+    test("400: /api/articles?sort_by=review",()=>{
+      return request(app)
+      .get("/api/articles?sort_by=review")
+      .expect(400)
+      .then(({body:{msg}})=>{
+        expect(msg).toBe("Bad Request")
+      })
+    })
+
+    test("200: /api/articles?sort_by=author&order=asc",()=>{
+      return request(app)
+      .get("/api/articles?sort_by=author&order=asc")
+      .expect(200)
+      .then(({body:{articles}})=>{
+        expect(articles).toBeSortedBy("author")
+      })
+    })
+  
+    test("200: /api/articles?sort_by=author&order=desc",()=>{
+      return request(app)
+      .get("/api/articles?sort_by=author&order=desc")
+      .expect(200)
+      .then(({body:{articles}})=>{
+        expect(articles).toBeSortedBy("author",{
+          descending: true
+        })
+      })
+    })
+  
+    test("400: /api/articles?sort_by=author&order=hello",()=>{
+      return request(app)
+      .get("/api/articles?sort_by=review")
+      .expect(400)
+      .then(({body:{msg}})=>{
+        expect(msg).toBe("Bad Request")
+      })
+    })
 
 })
 

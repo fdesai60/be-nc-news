@@ -95,3 +95,10 @@ exports.deleteDbApiComment=(comment_id)=>{
         return rows[0]
     })
 }
+
+exports.selectApiUsers=()=>{
+    return db.query(`SELECT * FROM users`)
+    .then(({rows})=>{
+        return rows
+    })
+}

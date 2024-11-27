@@ -2,7 +2,8 @@ const express = require("express")
 const app = express()
 const {getApi,getApiTopics,getApiArticleById, getApiArticles, getApiArticleComments,postArticleComment,
 patchApiArticle,
-deleteApiComment
+deleteApiComment,
+getApiUsers
 
  }= require("./controllers/api.controller")
 
@@ -25,6 +26,8 @@ app.post("/api/articles/:article_id/comments",postArticleComment )
 app.patch("/api/articles/:article_id",patchApiArticle)
 
 app.delete("/api/comments/:comment_id",deleteApiComment)
+
+app.get("/api/users",getApiUsers)
 
 app.use(postgresErrorHandler)
 

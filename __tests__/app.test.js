@@ -270,3 +270,89 @@ describe("POST /api/articles/:article_id/comments",()=>{
   })
 
 })
+
+
+describe("PATCH /api/articles/:article_id",()=>{
+  test("200:Responds with incremented patched object ",()=>{
+    return request(app)
+    .patch("/api/articles/1")
+    .send({ inc_votes: 5 })
+    .expect(200)
+    .then(({body:{article}})=>{
+      expect(article).toMatchObject( {
+        article_id: 1,
+        title: 'Living in the shadow of a great man',
+        topic: 'mitch',
+        author: 'butter_bridge',
+        body: 'I find this existence challenging',
+        created_at: "2020-07-09T20:11:00.000Z",
+        votes: 105,
+        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+      })
+    })
+  })
+
+  test("200:Responds with decremented patched object ",()=>{
+    return request(app)
+    .patch("/api/articles/1")
+    .send({ inc_votes: -10 })
+    .expect(200)
+    .then(({body:{article}})=>{
+      expect(article).toMatchObject(
+        {
+          article_id: 1,
+          title: 'Living in the shadow of a great man',
+          topic: 'mitch',
+          author: 'butter_bridge',
+          body: 'I find this existence challenging',
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 90,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+        })
+    })
+  })
+
+  test("400: Responds with error message 'Bad Request' if article_id isn't valid",()=>{
+    return request(app)
+    .patch("/api/articles/one")
+    .send({ inc_votes : 5 })
+    .expect(400)
+    .then(({body:{msg}})=>{
+      expect(msg).toBe('Bad Request')
+    })
+
+  })
+
+  test("404: Responds with error message 'Article id not found' if article_id is valid but not in database",()=>{
+    return request(app)
+    .patch("/api/articles/99999")
+    .send({ inc_votes : 5 })
+    .expect(404)
+    .then(({body:{msg}})=>{
+      expect(msg).toBe('Article id not found')
+    })
+  })
+
+  test("400: Responds with 'bad request' error message if request body value is invalid",()=>{
+    return request(app)
+    .patch("/api/articles/1")
+    .send({ inc_votes : "cat" })
+    .expect(400)
+    .then(({body:{msg}})=>{
+      expect(msg).toBe('Bad Request')
+    })
+    
+  })
+
+  test("400: Responds with 'bad request' error message if request body is missing properties",()=>{
+    return request(app)
+    .patch("/api/articles/1")
+    .send({})
+    .expect(400)
+    .then(({body:{msg}})=>{
+      expect(msg).toBe('Bad Request')
+    })
+  })
+})
+
+

@@ -1,5 +1,8 @@
 const endpointsJson = require("../endpoints.json")
-const {selectApiTopics, selectApiArticleByID,selectApiArticles, checkApiArticleExists,selectApiArticleComments,postArticleComment}=require("../models/api.models")
+const {selectApiTopics, selectApiArticleByID,selectApiArticles, checkApiArticleExists,selectApiArticleComments,insertArticleComment,
+updateApiArticle,
+
+}=require("../models/api.models")
 
 exports.getApi = (req,res)=>{
     res.status(200).send({endpoints:endpointsJson})
@@ -19,6 +22,7 @@ exports.getApiArticleById =(req,res,next)=>{
     const {article_id} = req.params
     selectApiArticleByID(article_id)
     .then((article)=>{
+        console.log(article);
         res.status(200).send({article})
     })
     .catch(err=>{
@@ -57,8 +61,9 @@ exports.getApiArticleComments =(req,res,next)=>{
 exports.postArticleComment =(req,res,next)=>{
     const commentToPost=req.body
     const{article_id}=req.params
-    postArticleComment(commentToPost,article_id)
+    insertArticleComment(commentToPost,article_id)
     .then(comment=>{
+        console.log(comment);
         res.status(201).send({comment})
     })
     .catch(err=>{
@@ -66,3 +71,18 @@ exports.postArticleComment =(req,res,next)=>{
     })
     
 }
+
+exports.patchApiArticle=(req,res,next)=>{
+    const {article_id}=req.params
+    const { inc_votes} = req.body
+    updateApiArticle(article_id,inc_votes)
+    .then(article=>{
+        res.status(200).send({article})
+    })
+    .catch(err=>{
+        next(err)
+    })
+    
+    
+}
+

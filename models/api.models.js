@@ -18,20 +18,50 @@ exports.selectApiArticleByID=(article_id)=>{
     })
 }
 
-exports.selectApiArticles= ()=>{
-    return db.query(`
-SELECT articles.author,articles.title,articles.article_id,articles.topic,articles.created_at,articles.votes,articles.article_img_url,COUNT(comment_id) AS comment_count
-FROM articles
-LEFT JOIN comments
-ON articles.article_id = comments.article_id
-GROUP BY articles. article_id
-ORDER BY articles.created_at DESC;
-`)
-    .then(({rows})=>{
+exports.selectApiArticles = (sort_by, order) => {
+  
+    let queryString = `
+        SELECT articles.author, articles.title, articles.article_id, articles.topic, 
+        articles.created_at, articles.votes, articles.article_img_url, 
+        COUNT(comment_id) AS comment_count
+        FROM articles
+        LEFT JOIN comments
+        ON articles.article_id = comments.article_id
+        GROUP BY articles.article_id`;
+
+    const queryValues = [];
+
+   
+    const validSortBy = ["title", "topic", "author","created_at", "votes", "article_image_url", "article_id,comment_count"];
     
-        return rows
-    })
-}
+    
+    if (sort_by && !validSortBy.includes(sort_by)) {
+        return Promise.reject({ status: 400, msg:"Bad Request" });
+    }
+
+
+    if (sort_by) {
+        queryString += ` ORDER BY ${sort_by}`;
+      
+    }
+
+    const validOrder = ["asc", "desc"];
+    if (order && !validOrder.includes(order)) {
+        return Promise.reject({ status: 400, msg: "Bad Request: Invalid order value" });
+    }
+
+    if (order) {
+        queryString += ` ${order}`
+        
+    }
+
+    return db.query(queryString, queryValues)
+        .then(({ rows }) => {
+            console.log(rows);
+            return rows;
+        });
+};
+
 
 
 exports.checkApiArticleExists=(article_id)=>{
@@ -40,7 +70,7 @@ exports.checkApiArticleExists=(article_id)=>{
         if(!rows.length){
             return Promise.reject({status:404,msg:"Invalid article id provided"})
         }
-        // console.log(rows[0]);
+       
     })
 
 }

@@ -14,8 +14,8 @@ This project is a **RESTful API** built to handle various endpoints for articles
 
 ## Prerequisites
 Please ensure you have the following installed on your machine, at their minimum verisons required:  
-Node.js: v22.9.0
-PostgreSQL: 14.13
+**Node.js**: v22.0.0 or higher  
+**PostgreSQL**: v14.0 or higher
 
 ## Using the API
 1. Clone the Repository    

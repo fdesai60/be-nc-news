@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require("express")
 const app = express()
 const {getApi,getApiTopics,getApiArticleById, getApiArticles, getApiArticleComments,postArticleComment,
@@ -8,6 +9,8 @@ getApiUsers
  }= require("./controllers/api.controller")
 
 const {customErrorHandler,serverErrorHandler,postgresErrorHandler}= require("./errors")
+
+app.use(cors());
 
 app.use(express.json())
 

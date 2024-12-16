@@ -26,7 +26,7 @@ describe("GET /api", () => {
   });
 });
 
-describe.only("GET /api/topics",()=>{
+describe("GET /api/topics",()=>{
   test("200: Responds with an array of topic objects where each topic object has properties of slug and description",()=>{
     return request(app)
     .get("/api/topics")

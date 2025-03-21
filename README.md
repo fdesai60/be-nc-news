@@ -1,5 +1,5 @@
 # Northcoders News API
-**Hosted version**: https://news-lzt1.onrender.com
+**Hosted version**: https://news-lzt1.onrender.com/api
 
 ## Project Overview
 This project is a **RESTful API** built to handle various endpoints for articles, topics, comments, and users. It allows you to interact with a **PostgreSQL** database to perform **CRUD** operations, through code which has been thoroughly **tested and error handled**.
